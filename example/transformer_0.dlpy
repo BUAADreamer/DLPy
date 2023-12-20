@@ -1,0 +1,4 @@
+model:transformer=64,8,6:'dataset/wiki.txt';
+train model 10,2,0.001;
+pred model 'Soccer is';
+save model 'checkpoints/ours';

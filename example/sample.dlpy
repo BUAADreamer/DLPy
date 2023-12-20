@@ -1,0 +1,4 @@
+mlp_model:mlp=100,50,2:'dataset/class.txt';
+train mlp_model 10,2,0.0001;
+pred mlp_model 'I love you';
+

@@ -1,0 +1,8 @@
+a = 0;
+
+while a < 100 {
+    print(a);
+    break;
+    continue;
+    a = a+1;
+}

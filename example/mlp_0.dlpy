@@ -1,0 +1,4 @@
+mlp_model:mlp=50,50,2:'dataset/class.txt';
+train mlp_model 10,2,0.001;
+pred mlp_model 'I love you';
+save mlp_model 'checkpoints/mlp_model.pth';

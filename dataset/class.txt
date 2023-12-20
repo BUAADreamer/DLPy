@@ -1,0 +1,2 @@
+{"text":"I love it","label":1}
+{"text":"I hate it","label":0}
