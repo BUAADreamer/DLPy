@@ -158,8 +158,6 @@ class TreePrinter:
         ret+='INDEX'
         return ret
     
-    
-    
     @addToClass(AST.Module)
     def printTree(self, level=0):
         return self.body.printTree()
@@ -186,4 +184,16 @@ class TreePrinter:
     def printTree(self,level=0):
         ret = LEVEL_TOKEN * level
         ret += "SAVE"
+        return ret
+    
+    @addToClass(AST.Chat)
+    def printTree(self,level=0):
+        ret = LEVEL_TOKEN * level
+        ret += "CHAT"
+        return ret
+    
+    @addToClass(AST.Scan)
+    def printTree(self,level=0):
+        ret = LEVEL_TOKEN * level
+        ret += "SCAN"
         return ret

@@ -22,7 +22,7 @@ else:
     print("====语法分析结果====")
     parser = yacc.yacc(module=Parser)
     ast = parser.parse(file_input, lexer=Lexer())
-    # print(ast)
+    print(ast)
     print("====语义分析结果====")
     original_stdout = sys.stdout
     output = StringIO()
