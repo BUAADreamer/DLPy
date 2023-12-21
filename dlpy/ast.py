@@ -182,3 +182,14 @@ class Save(Node):
         self.type = 'save'
         self.model_name = model_name
         self.save_path = save_path
+
+class Scan(Node):
+    def __init__(self, name):
+        self.type = 'scan'
+        self.name = name
+
+class Chat(Node):
+    def __init__(self, model_name, user_input):
+        self.type = 'chat'
+        self.model_name = model_name
+        self.user_input = user_input

@@ -1,13 +1,20 @@
 transformer_def_load = """
-{0} = AutoModelForCausalLM.from_pretrained("{1}").to("cuda")
+{0} = AutoModelForCausalLM.from_pretrained("{1}", device_map="auto", torch_dtype=torch.bfloat16, trust_remote_code=True)
+tokenizer = AutoTokenizer.from_pretrained("{1}", use_fast=False, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
 data = load_dataset('text', data_files='{2}')
 data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 def tokenize_function(examples):
     return tokenizer(examples["text"])
 tokenized_data = data.map(tokenize_function, batched=True)
+model.generation_config = GenerationConfig.from_pretrained("{1}")
+print("模型加载成功")
 """
 
-transformer_def_scratch = """config = AutoConfig.from_pretrained(
+transformer_def_scratch = """
+tokenizer = AutoTokenizer.from_pretrained("checkpoints/gpt2", use_fast=False, trust_remote_code=True)
+tokenizer.pad_token = tokenizer.eos_token
+config = AutoConfig.from_pretrained(
     "checkpoints/gpt2",
     vocab_size=len(tokenizer),
     n_embd={1},
@@ -22,14 +29,15 @@ data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 def tokenize_function(examples):
     return tokenizer(examples["text"])
 tokenized_data = data.map(tokenize_function, batched=True)
+print("模型加载成功")
 """
 
 transformer_import = """from transformers import AutoTokenizer, AutoModelForCausalLM, GPT2LMHeadModel, AutoConfig
 from transformers import Trainer, TrainingArguments
 from datasets import load_dataset
 from transformers import DataCollatorForLanguageModeling
-tokenizer = AutoTokenizer.from_pretrained("checkpoints/gpt2")
-tokenizer.pad_token = tokenizer.eos_token
+from transformers.generation.utils import GenerationConfig
+import torch
 def generate(model,input):
     model_inputs = tokenizer([input], return_tensors="pt").to("cuda")
     generated_ids = model.generate(**model_inputs)
@@ -54,6 +62,8 @@ trainer.train()
 
 transformer_pred = """generate({0},'{1}')
 """
+
+transformer_chat = 'messages = [{"role": "user", "content": "{1}"}]\nresponse = {0}.chat(tokenizer, messages)'
 
 transformer_save = """{0}.save_pretrained('{1}')
 """

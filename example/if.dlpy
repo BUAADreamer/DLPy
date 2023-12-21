@@ -1,12 +1,11 @@
-a = 10;
-b = 15;
-
-a:list=[1,23];
+x:list=[1,23];
 y:int=1;
 def f(x) {
     return x+1,x+2;
 }
 
+a = 10;
+b = 15;
 if a == b {
     print('problem');
 } else {

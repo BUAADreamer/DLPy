@@ -67,6 +67,7 @@ class Parser(object):
         """dl_stmt : train_stmt
                     | pred_stmt
                     | save_stmt
+                    | chat_stmt
         """
         p[0] = p[1]
 
@@ -84,6 +85,11 @@ class Parser(object):
         """save_stmt : SAVE name STRING
         """
         p[0] = AST.Save(p[2], p[3])
+
+    def p_chat_stmt(p):
+        """chat_stmt : CHAT name name
+        """
+        p[0] = AST.Chat(p[2], p[3])
 
     # flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
     def p_flow_stmt(p):
@@ -118,9 +124,13 @@ class Parser(object):
             p[0] = AST.If(p[2], p[3], p[5])
 
     def p_funcdef_stmt(p):
-        """funcdef_stmt : DEF name LPAREN list_expr RPAREN suite
+        """funcdef_stmt : DEF name LPAREN list_expr RPAREN suite 
+                        | DEF name LPAREN RPAREN suite
         """
-        p[0] = AST.Funcdef(p[2],AST.Tuple(p[4]),p[6])
+        if len(p)==7:
+            p[0] = AST.Funcdef(p[2],AST.Tuple(p[4]),p[6])
+        else:
+            p[0] = AST.Funcdef(p[2],None,p[5])
     
     def p_suite(p):
         """suite : simple_stmt
@@ -173,13 +183,16 @@ class Parser(object):
                 | NAME COLON basic_type ASSIGN expr
                 | NAME COLON basic_type ASSIGN STRING COLON STRING
                 | NAME COLON basic_type ASSIGN list_expr COLON STRING
+                | NAME ASSIGN SCAN LPAREN RPAREN
         """
         if p[3]=='transformer' or p[3]=='mlp':
             p[0] = AST.Model(p[1],p[3], p[5], p[7])
         elif len(p) == 4:
             p[0] = AST.Assign(p[1], p[3])
-        elif len(p) == 6:
+        elif len(p) == 6 and p[3]!='scan':
             p[0] = AST.Assign_Type(p[1], p[3], p[5])
+        else:
+            p[0] = AST.Scan(p[1])
 
     # arith_expr: term (('+'|'-') term)*
     # term: factor (('*'|'@'|'/'|'%'|'//') factor)*
@@ -206,8 +219,7 @@ class Parser(object):
 
     # atom_expr: [AWAIT] atom trailer*
     def p_atom_expr(p):
-        """atom_expr : 
-                     | atom 
+        """atom_expr : atom 
                      | atom_expr LSQBRACK expr RSQBRACK
                      | name LPAREN list_expr RPAREN
                      """

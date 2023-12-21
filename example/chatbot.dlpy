@@ -1,0 +1,7 @@
+model:transformer='checkpoints/baichuan2-7b-chat':'dataset/wiki.txt';
+while True{
+    print('User:');
+    x=scan();
+    print('Bot:');
+    chat model x;
+}

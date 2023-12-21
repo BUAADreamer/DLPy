@@ -3,3 +3,5 @@ ply
 datasets
 torch
 json
+sentencepiece
+xformers

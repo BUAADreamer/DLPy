@@ -41,11 +41,13 @@ class Lexer(object):
         'save': 'SAVE',
         'train': 'TRAIN',
         'pred': 'PRED',
+        'chat': 'CHAT',
 
         'int': "INT_TYPE",
         'float': 'FLOAT_TYPE',
         'list': 'LIST_TYPE',
-        'tuple': 'TUPLE_TYPE'
+        'tuple': 'TUPLE_TYPE',
+        'scan': 'SCAN'
     }
 
     tokens = tokens + list(reserved.values())

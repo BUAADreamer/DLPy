@@ -131,7 +131,10 @@ class Interpreter(object):
     def visit(self,node):
         print("def ",end="")
         node.name.accept(self)
-        node.arguments.accept(self)
+        if node.arguments is not None:
+            node.arguments.accept(self)
+        else:
+            print('()',end='')
         print(":")
         self.layer+=1
         node.body.accept(self)
@@ -182,27 +185,29 @@ class Interpreter(object):
 
     @when(AST.Model)
     def visit(self, node):
+        output_str = ''
         self.model2type[node.model_name] = node.model_type
         if node.model_type == "transformer":
             if node.model_type not in self.importset:
-                print(transformer_import)
+                output_str+=transformer_import+'\n'
                 self.importset.add(node.model_type)
             if isinstance(node.model_def, str):
-                print(transformer_def_load.format(node.model_name,node.model_def, node.data_path))
+                output_str+=transformer_def_load.format(node.model_name,node.model_def, node.data_path)+'\n'
             else:
                 def_list = [x.value for x in node.model_def.expression_list]
-                print(transformer_def_scratch.format(node.model_name,def_list[0],def_list[1],def_list[2],node.data_path))
-                      
+                output_str+=transformer_def_scratch.format(node.model_name,def_list[0],def_list[1],def_list[2],node.data_path)+'\n'
         elif node.model_type == "mlp":
             if node.model_type not in self.importset:
-                print(mlp_import)
+                output_str+=mlp_import+'\n'
                 self.importset.add(node.model_type)
             if isinstance(node.model_def, str):
-                print(mlp_def_load.format(node.model_name,node.model_def, node.data_path)) 
+                output_str+=mlp_def_load.format(node.model_name,node.model_def, node.data_path)+'\n'
             else:
                 def_list = [x.value for x in node.model_def.expression_list]
-                print(mlp_def_scratch.format(node.model_name,str(def_list),node.data_path))
-
+                output_str+=mlp_def_scratch.format(node.model_name,str(def_list),node.data_path)+'\n'
+        output_str = output_str.replace('\n', '\n'+'\t'*self.layer)
+        print(output_str)
+        
     @when(AST.Train)
     def visit(self, node):
         if node.model_name.id not in self.model2type:
@@ -210,7 +215,9 @@ class Interpreter(object):
         model_type = self.model2type[node.model_name.id]
         param_list = [x.value for x in node.params.expression_list]
         template = eval(f'{model_type}_train')
-        print(template.format(node.model_name.id,param_list[0],param_list[1],param_list[2]))
+        output_str=template.format(node.model_name.id,param_list[0],param_list[1],param_list[2])
+        output_str = output_str.replace('\n', '\n'+'\t'*self.layer)
+        print(output_str)
 
     @when(AST.Pred)
     def visit(self, node):
@@ -219,7 +226,9 @@ class Interpreter(object):
         model_type = self.model2type[node.model_name.id]
         pred_input = node.input
         template = eval(f'{model_type}_pred')
-        print(template.format(node.model_name.id, pred_input))
+        output_str = template.format(node.model_name.id, pred_input)
+        output_str = output_str.replace('\n', '\n'+'\t'*self.layer)
+        print(output_str)
 
     @when(AST.Save)
     def visit(self, node):
@@ -227,4 +236,21 @@ class Interpreter(object):
             raise NotImplementedError
         model_type = self.model2type[node.model_name.id]
         template = eval(f'{model_type}_save')
-        print(template.format(node.model_name.id, node.save_path))
+        output_str = template.format(node.model_name.id, node.save_path)
+        output_str = output_str.replace('\n', '\n'+'\t'*self.layer)
+        print(output_str)
+        
+    @when(AST.Chat)
+    def visit(self, node):
+        if node.model_name.id not in self.model2type:
+            raise NotImplementedError
+        model_type = self.model2type[node.model_name.id]
+        template = eval(f'{model_type}_chat')
+        output_str = 'messages = [{"role": "user", "content": ' + node.user_input.id + '}]\nresponse = ' + node.model_name.id + '.chat(tokenizer, messages)\nprint(response)'
+        output_str = output_str.replace('\n', '\n'+'\t'*self.layer)
+        print(output_str)
+        
+    @when(AST.Scan)
+    def visit(self, node):
+        print(node.name, " = ", end="")
+        print("input()",end="")

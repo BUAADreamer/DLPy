@@ -1,0 +1,6 @@
+while True{
+    model:transformer=64,8,6:'wiki.txt';
+    train model 10,2,0.001;
+    pred model 'Soccer is';
+    save model 'ours';
+}
