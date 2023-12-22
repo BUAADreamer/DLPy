@@ -34,3 +34,6 @@ dlpy example/sample.dlpy
 ```shell
 python3 test.py example/if.dlpy
 ```
+
+## 致谢
+本项目基于[ply](https://github.com/dabeaz/ply)，参考了[simplepy](https://github.com/kgruszowski/simplepy)，感谢这些库的作者！！
