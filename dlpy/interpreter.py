@@ -163,7 +163,7 @@ class Interpreter(object):
 
     @when(AST.Str)
     def visit(self, node):
-        print("'",node.value,"'", end="")
+        print("'" + node.value + "'", end="")
         return node.value
 
     @when(AST.Index)

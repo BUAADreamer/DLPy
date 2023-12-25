@@ -1,0 +1,15 @@
+def func(x){
+    return (x+2)*3;
+}
+y=func(1);
+print(y);
+a = 10;
+b = 15;
+if a == b {
+    print('problem');
+} else {
+    print('ok');
+}
+result = 2 + 100 / 5 * 2;
+print('2 + 100 / 5 * 2');
+print(result);
