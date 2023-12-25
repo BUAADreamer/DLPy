@@ -25,14 +25,14 @@ while True{
 
 ## 代码运行
 ```shell
-python3 main.py example/sample.dlpy
+python3 main.py examples/sample.dlpy
 #快捷运行
 dlpy example/sample.dlpy
 ```
 
 ## 编译器完整运行结果
 ```shell
-python3 test.py example/if.dlpy
+python3 test.py examples/if.dlpy
 ```
 
 ## 致谢
